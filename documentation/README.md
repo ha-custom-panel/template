@@ -48,9 +48,11 @@ follow these steps:
 
 **Commands**:
 
-> git remote add template https://github.com/ha-custom-panel/template
-> git fetch template`
-> get merge template/main --allow-unrelated-histories
+```
+git remote add template https://github.com/ha-custom-panel/template
+git fetch template`
+get merge template/main --allow-unrelated-histories
+```
 
 If you are using a dev container, rebuild the dev container which will run `script/bootstrap` to
 setup the proper node modules.
