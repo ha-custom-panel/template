@@ -11,7 +11,7 @@ that current provide custom panels are:
 This template is also intended to make it easier for integrations to upgrade thier custom panel to utilize the latest Home Assistant frontend
 version.
 
-## Getting Started
+# Getting Started
 
 To get started create a new repository from this template. The the [instructions] on GitHub for how to create a new repository based
 on a template.
@@ -28,7 +28,7 @@ If you are not utilizing a devcontainer, manually run the `script/bootstrap` scr
 
 ### package.json.project
 
-The `package.json` file is generaged by merging the `./package.json.project" file and the "./homeassistant-frontend/package.json"
+The `package.json` file is generaged by merging the `./package.json.project` file and the `./homeassistant-frontend/package.json`
 file. A template `package.json.project`file is available in the`templates`folder. All project specific packages should be added to the`package.json.project`file including any project specific metadata such as`name`and`description`.
 
 Whenever you make changes to the `package.json.project` file run the following command to merge the changes into `package.json`:
@@ -37,12 +37,7 @@ Whenever you make changes to the `package.json.project` file run the following c
 
 [instructions]: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
 
-## Maintaning package.json
-
-The `package.json` will be updated whenever the Home Assistant frontend is upgraded. In order to ensure your panel specific
-dependances are managed, utilize the `package.json.project` file to
-
-## Upgrading the Home Assistant Frontend Version
+# Upgrading the Home Assistant Frontend Version
 
 The maintainers of this template will, on occasion, upgrade the Home Assistant frontend version. To upgrade to the latest version of the frontend
 follow these steps:
@@ -62,7 +57,3 @@ setup the proper node modules.
 
 Performing a merge with unrelated historys performs a file by file diff to determine the merge. It is strongly recommended not to change files
 provided as part of the template unless otherwise noted. To identify which files provided by the template are expected to be edited, see <some section> below.
-
-```
-
-```
