@@ -1,8 +1,3 @@
----
-title: Custome Panel Template
-description: Instructions on how to use this template to build a custom panel for Home Assistant.
----
-
 ## Introduction
 
 This repository is provided as a template for Home Assistant integrations to provide thier own custom panel. 
@@ -27,13 +22,16 @@ on a template.
 The maintainers of this template will, on occasion, upgrade the Home Assistant frontend version. To upgrade to the latest version of the frontend
 follow these steps:
 
-1. Set this repository as a remote repository:
-  - ` git remote add template https://ha-custom-panel/template`
-2. Fetch the latest version of this template:
-  - `git fetch template`
+1. Set this repository as a remote repository
+2. Fetch the latest version of this template
 3. Merge the current version of the template to your repository
-  - `get merge template/main --allow-unrelated-histories`
 
+Commands:
+```
+git remote add template https://github.com/ha-custom-panel/template
+git fetch template`
+get merge template/main --allow-unrelated-histories
+```
 
-<p class="warning">Performing a merge with unrelated historys performs a file by file diff to determine the merge. It is strongly recommended not to change files 
-provided as part of the template unless otherwise noted. To identify which files provided by the template are expected to be edited, see <some section> below.</p>
+Performing a merge with unrelated historys performs a file by file diff to determine the merge. It is strongly recommended not to change files 
+provided as part of the template unless otherwise noted. To identify which files provided by the template are expected to be edited, see <some section> below.
