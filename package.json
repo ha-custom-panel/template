@@ -151,8 +151,8 @@
   "devDependencies": {
     "@babel/core": "7.22.1",
     "@babel/plugin-proposal-decorators": "7.22.3",
-    "@babel/plugin-transform-runtime": "7.22.4",
-    "@babel/preset-env": "7.22.4",
+    "@babel/plugin-transform-runtime": "7.22.2",
+    "@babel/preset-env": "7.22.2",
     "@babel/preset-typescript": "7.21.5",
     "@koa/cors": "4.0.0",
     "@octokit/auth-oauth-device": "4.0.4",
@@ -245,11 +245,10 @@
     "webpackbar": "5.0.2",
     "workbox-build": "6.6.0"
   },
-  "_comment": "Polymer 3.2 contained a bug, fixed in https://github.com/Polymer/polymer/pull/5569, add as patch",
   "resolutions": {
-    "@polymer/polymer": "patch:@polymer/polymer@3.5.1#./.yarn/patches/@polymer/polymer/pr-5569.patch",
+    "@polymer/polymer": "patch:@polymer/polymer@3.5.1#./homeassistant-frontend/.yarn/patches/@polymer/polymer/pr-5569.patch",
     "@material/mwc-button@^0.25.3": "^0.27.0",
-    "sortablejs@1.15.0": "patch:sortablejs@npm%3A1.15.0#./.yarn/patches/sortablejs-npm-1.15.0-f3a393abcc.patch"
+    "sortablejs@1.15.0": "patch:sortablejs@npm%3A1.15.0#./homeassistant-frontend/.yarn/patches/sortablejs-npm-1.15.0-f3a393abcc.patch"
   },
   "prettier": {
     "trailingComma": "es5",
