@@ -45,9 +45,14 @@ if [ ! -f "package.json" ]; then
   cp ./package.json.project ./package.json
 fi
 
+# Provide a base src directory if needed
+if [ ! -d "./src" ]; then
+  cp -r ./templates/src  .
+fi
+
 # Install the python build tools
 pip install --upgrade twine build
 
 # Install the node packages
-# node ./script/merge_dependencies.js
+node ./script/merge_dependencies.js
 yarn install
