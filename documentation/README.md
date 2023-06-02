@@ -6,7 +6,7 @@ that current provide custom panels are:
 
 - Dynalite
 - Insteon
-- KNX
+- panel
 
 This template is also intended to make it easier for integrations to upgrade thier custom panel to utilize the latest Home Assistant frontend
 version.

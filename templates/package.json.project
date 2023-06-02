@@ -1,0 +1,35 @@
+{
+  "name": "custom-panel-frontend",
+  "description": "Frontend of Custom Panel",
+  "source": "src/entrypoint.ts",
+  "main": "panel_frontend/entrypoint.js",
+  "scripts": {
+    "develop": "./script/develop",
+    "build": "./script/build",
+    "lint:eslint": "eslint \"**/src/**/*.{js,ts,html}\" --ignore-path .gitignore",
+    "format:eslint": "eslint \"**/src/**/*.{js,ts,html}\" --fix --ignore-path .gitignore",
+    "lint:prettier": "prettier \"**/src/**/*.{js,ts,json,css,md}\" --check",
+    "format:prettier": "prettier \"**/src/**/*.{js,ts,json,css,md}\" --write",
+    "lint:types": "tsc",
+    "lint:lit": "lit-analyzer \"**/src/**/*.ts\" --format markdown --outFile result.md",
+    "lint": "yarn run lint:eslint && yarn run lint:prettier && yarn run lint:types",
+    "format": "yarn run format:eslint && yarn run format:prettier"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ha-custom-panel/template"
+  },
+  "bugs": {
+    "url": "https://github.com/ha-custom-panel/template/issues"
+  },
+  "homepage": "https://github.com/ha-custom-panel/template",
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "resolutions": {
+  },
+  "prettier": {
+  },
+  "packageManager": "yarn@3.5.1"
+}
