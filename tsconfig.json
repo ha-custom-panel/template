@@ -1,13 +1,7 @@
 {
   "compilerOptions": {
-    // Language Options
     "target": "ES2017",
-    "lib": [
-      "ES2017",
-      "DOM",
-      "DOM.Iterable",
-      "WebWorker"
-    ],
+    "lib": ["ES2017", "DOM", "DOM.Iterable", "WebWorker"],
     "experimentalDecorators": true,
     // Modules
     "module": "ESNext",
@@ -27,6 +21,10 @@
     // Interop with CommonJS and other tools
     "esModuleInterop": true,
     "isolatedModules": true,
+    "baseUrl": "src",
+    "paths": {
+      "@ha/*": ["../homeassistant-frontend/src/*"],
+    },
     "plugins": [
       {
         "name": "ts-lit-plugin",
@@ -37,8 +35,7 @@
           "no-unclosed-tag": "error",
           "no-incompatible-type-binding": "warning",
           "no-invalid-css": "warning",
-          "no-missing-element-type-definition": "warning",
-          "no-property-visibility-mismatch": "error"
+          "no-missing-element-type-definition": "warning"
         }
       }
     ]

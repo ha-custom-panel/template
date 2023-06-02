@@ -1,3 +1,7 @@
+# Build files
+build/
+panel_frontend/
+
 # Logs
 logs
 *.log

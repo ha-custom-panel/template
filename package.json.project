@@ -1,13 +1,13 @@
 {
-  "description": "A frontend for Home Assistant",
+  "description": "A Home Assistant custom panel template.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/home-assistant/frontend"
+    "url": "https://github.com/ha-custom-panel/template"
   },
-  "name": "home-assistant-frontend",
+  "name": "home-assistant-custom-panel-template",
   "version": "1.0.0",
   "scripts": {
-    "build": "script/build_frontend",
+    "build": "script/build",
     "lint:eslint": "eslint \"**/src/**/*.{js,ts,html}\" --ignore-path .gitignore",
     "format:eslint": "eslint \"**/src/**/*.{js,ts,html}\" --fix --ignore-path .gitignore",
     "lint:prettier": "prettier \"**/src/**/*.{js,ts,json,css,md}\" --check",
@@ -21,12 +21,13 @@
     "postpack": "pinst --enable",
     "test": "instant-mocha --webpack-config ./test/webpack.config.js --require ./test/setup.cjs \"test/**/*.ts\""
   },
-  "author": "Paulus Schoutsen <Paulus@PaulusSchoutsen.nl> (http://paulusschoutsen.nl)",
-  "license": "Apache-2.0",
+  "author": "Tom Harris <tomharris@harrisnj.net>",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
   },
   "devDependencies": {
+    "tsconfig-paths-webpack-plugin": "^4.0.1"
   },
   "resolutions": {
   },
