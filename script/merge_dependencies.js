@@ -25,8 +25,13 @@ fs.writeFileSync(
         ...core.devDependencies,
       },
       prettier: { ...app.prettier, ...core.prettier },
+      packageManager: core.packageManager,
     },
     null,
     2
   )
 );
+
+const yarnRcCore = fs.readFileSync("./homeassistant-frontend/.yarnrc.yml", "utf8");
+const yarnRcKnx = yarnRcCore.replace(/\.yarn\//g, "homeassistant-frontend/.yarn/");
+fs.writeFileSync("./.yarnrc.yml", yarnRcKnx);
