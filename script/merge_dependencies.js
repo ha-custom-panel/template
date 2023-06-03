@@ -33,5 +33,5 @@ fs.writeFileSync(
 );
 
 const yarnRcCore = fs.readFileSync("./homeassistant-frontend/.yarnrc.yml", "utf8");
-const yarnRcKnx = yarnRcCore.replace(/\.yarn\//g, "homeassistant-frontend/.yarn/");
-fs.writeFileSync("./.yarnrc.yml", yarnRcKnx);
+const yarnRcApp = yarnRcCore.replace(/\.yarn\//g, "homeassistant-frontend/.yarn/");
+fs.writeFileSync("./.yarnrc.yml", yarnRcApp);
