@@ -32,6 +32,5 @@
   "resolutions": {
   },
   "prettier": {
-  },
-  "packageManager": "yarn@3.5.1"
+  }
 }
