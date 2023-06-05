@@ -9,19 +9,19 @@ const app = JSON.parse(rawapp);
 const yarnDirRegExp = /\.yarn\//g;
 const yarnDirSubModule = "homeassistant-frontend/.yarn/";
 
-for (let k in core.resolutions) {
-  core.resolutions[k] = core.resolutions[k].replace(
-    yarnDirRegExp,
-    yarnDirSubModule
-  );
-}
+const subdirResolutions = Object.fromEntries(
+  Object.entries(core.resolutions).map(([key, value]) => [
+    key,
+    value.replace(yarnDirRegExp, yarnDirSubModule),
+  ])
+);
 
 fs.writeFileSync(
   "./package.json",
   JSON.stringify(
     {
       ...app,
-      resolutions: { ...app.resolutions, ...core.resolutions },
+      resolutions: { ...app.resolutions, ...subdirResolutions },
       dependencies: { ...app.dependencies, ...core.dependencies },
       devDependencies: {
         ...app.devDependencies,
