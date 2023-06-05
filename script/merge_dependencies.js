@@ -1,4 +1,4 @@
-import fs from "fs"
+import fs from "fs";
 
 let rawcore = fs.readFileSync("./homeassistant-frontend/package.json");
 let rawapp = fs.readFileSync("./package.json.project");
@@ -6,10 +6,13 @@ let rawapp = fs.readFileSync("./package.json.project");
 const core = JSON.parse(rawcore);
 const app = JSON.parse(rawapp);
 
+const yarnDirRegExp = /\.yarn\//g;
+const yarnDirSubModule = "homeassistant-frontend/.yarn/";
+
 for (let k in core.resolutions) {
   core.resolutions[k] = core.resolutions[k].replace(
-    "./.yarn/",
-    "./homeassistant-frontend/.yarn/"
+    yarnDirRegExp,
+    yarnDirSubModule
   );
 }
 
@@ -32,6 +35,9 @@ fs.writeFileSync(
   )
 );
 
-const yarnRcCore = fs.readFileSync("./homeassistant-frontend/.yarnrc.yml", "utf8");
-const yarnRcApp = yarnRcCore.replace(/\.yarn\//g, "homeassistant-frontend/.yarn/");
+const yarnRcCore = fs.readFileSync(
+  "./homeassistant-frontend/.yarnrc.yml",
+  "utf8"
+);
+const yarnRcApp = yarnRcCore.replace(yarnDirRegExp, yarnDirSubModule);
 fs.writeFileSync("./.yarnrc.yml", yarnRcApp);
