@@ -1,4 +1,4 @@
-import fs from "fs";
+const fs = require("fs");
 
 const rawPackageCore = fs.readFileSync("./homeassistant-frontend/package.json");
 const rawPackageApp = fs.readFileSync("./package.json.project");

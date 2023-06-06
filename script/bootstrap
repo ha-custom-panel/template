@@ -35,18 +35,9 @@ if [ ! -d "./homeassistant-frontend/src" ]; then
   cd ..
 fi
 
-# Ensure there is a package.json.project file
-if [ ! -f "package.json.project" ]; then
-  cp ./templates/package.json .
-fi
-
-# Ensure there is a package.json file
-if [ ! -f "package.json" ]; then
-  cp ./package.json.project ./package.json
-fi
-
 # Provide a base src directory if needed
 if [ ! -d "./src" ]; then
+  cp -r ./templates/base_config/. .
   cp -r ./templates/src  .
 fi
 
@@ -54,5 +45,5 @@ fi
 pip install --upgrade twine build
 
 # Install the node packages
-node ./script/merge_dependencies.js
+node ./script/merge_dependencies.cjs
 yarn install
