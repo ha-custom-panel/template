@@ -33,7 +33,7 @@ file. A template `package.json.project`file is available in the`templates`folder
 
 Whenever you make changes to the `package.json.project` file run the following command to merge the changes into `package.json`:
 
-> node ./script/merge_dependencies.js
+> node ./script/merge_dependencies.cjs
 
 [instructions]: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
 
