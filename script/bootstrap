@@ -35,13 +35,9 @@ if [ ! -d "./homeassistant-frontend/src" ]; then
   cd ..
 fi
 
-# Ensure there is a package.json.project file
-if [ ! -f "package.json.project" ]; then
-  cp ./templates/package.json .
-fi
-
 # Provide a base src directory if needed
 if [ ! -d "./src" ]; then
+  cp -r ./templates/base_config/. .
   cp -r ./templates/src  .
 fi
 
