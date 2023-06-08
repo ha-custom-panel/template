@@ -3,6 +3,15 @@ const path = require("path");
 const env = require("./env.cjs");
 const paths = require("./paths.cjs");
 
+// Question: Do we need `sourceMapURL`?
+// GitHub base URL to use for production source maps
+// Nightly builds use the commit SHA, otherwise assumes there is a tag that matches the version
+module.exports.sourceMapURL = () => {
+  const ref = env.version().endsWith("dev")
+    ? process.env.GITHUB_SHA || "dev"
+    : env.version();
+  return `https://raw.githubusercontent.com/home-assistant/frontend/${ref}`;
+};
 // Files from NPM Packages that should not be imported
 module.exports.ignorePackages = ({ latestBuild }) => [
   // Part of yaml.js and only used for !!js functions that we don't use
@@ -31,29 +40,6 @@ module.exports.emptyPackages = ({ latestBuild, isHassioBuild }) =>
       ),
     // This polyfill is loaded in workers to support ES5, filter it out.
     latestBuild && require.resolve("proxy-polyfill/src/index.js"),
-    // Icons in supervisor conflict with icons in HA so we don't load.
-    isHassioBuild &&
-      require.resolve(
-        path.resolve(
-          paths.polymer_dir,
-          "homeassistant-frontend/src/components/ha-icon.ts"
-        )
-      ),
-    isHassioBuild &&
-      require.resolve(
-        path.resolve(
-          paths.polymer_dir,
-          "homeassistant-frontend/src/components/ha-icon-picker.ts"
-        )
-      ),
-    // Icons in supervisor conflict with icons in HA so we don't load.
-    isHassioBuild &&
-      require.resolve(
-        path.resolve(
-          paths.polymer_dir,
-          "homeassistant-frontend/src/resources/translations-metadata.ts"
-        )
-      ),
   ].filter(Boolean);
 
 module.exports.definedVars = ({ isProdBuild, latestBuild, defineOverlay }) => ({
@@ -70,6 +56,18 @@ module.exports.definedVars = ({ isProdBuild, latestBuild, defineOverlay }) => ({
   ...defineOverlay,
 });
 
+module.exports.htmlMinifierOptions = {
+  caseSensitive: true,
+  collapseWhitespace: true,
+  conservativeCollapse: true,
+  decodeEntities: true,
+  removeComments: true,
+  removeRedundantAttributes: true,
+  minifyCSS: {
+    compatibility: "*,-properties.zeroUnits",
+  },
+};
+
 module.exports.terserOptions = ({ latestBuild, isTestBuild }) => ({
   safari10: !latestBuild,
   ecma: latestBuild ? 2015 : 5,
@@ -77,7 +75,7 @@ module.exports.terserOptions = ({ latestBuild, isTestBuild }) => ({
   sourceMap: !isTestBuild,
 });
 
-module.exports.babelOptions = ({ latestBuild }) => ({
+module.exports.babelOptions = ({ latestBuild, isProdBuild, isTestBuild }) => ({
   babelrc: false,
   compact: false,
   assumptions: {
@@ -110,6 +108,23 @@ module.exports.babelOptions = ({ latestBuild }) => ({
         ignoreModuleNotFound: true,
       },
     ],
+    // Minify template literals for production
+    isProdBuild && [
+      "template-html-minifier",
+      {
+        modules: {
+          lit: [
+            "html",
+            { name: "svg", encapsulation: "svg" },
+            { name: "css", encapsulation: "style" },
+          ],
+          "@polymer/polymer/lib/utils/html-tag": ["html"],
+        },
+        strictCSS: true,
+        htmlMinifier: module.exports.htmlMinifierOptions,
+        failOnError: true, // we can turn this off in case of false positives
+      },
+    ],
     // Import helpers and regenerator from runtime package
     [
       "@babel/plugin-transform-runtime",
@@ -123,7 +138,10 @@ module.exports.babelOptions = ({ latestBuild }) => ({
     /node_modules[\\/]core-js/,
     /node_modules[\\/]webpack[\\/]buildin/,
   ],
+  sourceMaps: !isTestBuild,
 });
+
+const nameSuffix = (latestBuild) => (latestBuild ? "-latest" : "-es5");
 
 const outputPath = (outputRoot, latestBuild) =>
   path.resolve(outputRoot, latestBuild ? "frontend_latest" : "frontend_es5");
@@ -134,6 +152,7 @@ const publicPath = (latestBuild, root = "") =>
 module.exports.config = {
   panel({ isProdBuild, latestBuild }) {
     return {
+      name: "panel" + nameSuffix(latestBuild),
       entry: {
         entrypoint: path.resolve(paths.panel_dir, "src/entrypoint.ts"),
       },
@@ -141,7 +160,6 @@ module.exports.config = {
       publicPath: publicPath(latestBuild, paths.panel_publicPath),
       isProdBuild,
       latestBuild,
-      isHassioBuild: true,
     };
   },
 };

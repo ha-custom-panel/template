@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const webpack = require("webpack");
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
@@ -24,14 +23,16 @@ class LogStartCompilePlugin {
 }
 
 const createWebpackConfig = ({
+  name,
   entry,
   outputPath,
   publicPath,
   defineOverlay,
   isProdBuild,
   latestBuild,
-  isStatsBuild,
-  isHassioBuild,
+  isStatsBuild, // Remove?
+  isTestBuild,
+  isHassioBuild, // Remove?
   dontHash,
 }) => {
   if (!dontHash) {
@@ -39,10 +40,16 @@ const createWebpackConfig = ({
   }
   const ignorePackages = bundle.ignorePackages({ latestBuild });
   return {
+    name,
     mode: isProdBuild ? "production" : "development",
     target: ["web", latestBuild ? "es2017" : "es5"],
-    devtool: isProdBuild
-      ? "cheap-module-source-map"
+    // For tests/CI, source maps are skipped to gain build speed
+    // For production, generate source maps for accurate stack traces without source code
+    // For development, generate "cheap" versions that can map to original line numbers
+    devtool: isTestBuild
+      ? false
+      : isProdBuild
+      ? "nosources-source-map"
       : "eval-cheap-module-source-map",
     entry,
     node: false,
@@ -53,7 +60,7 @@ const createWebpackConfig = ({
           use: {
             loader: "babel-loader",
             options: {
-              ...bundle.babelOptions({ latestBuild }),
+              ...bundle.babelOptions({ latestBuild, isProdBuild, isTestBuild }),
               cacheDirectory: !isProdBuild,
               cacheCompression: false,
             },
@@ -73,7 +80,7 @@ const createWebpackConfig = ({
         new TerserPlugin({
           parallel: true,
           extractComments: true,
-          terserOptions: bundle.terserOptions(latestBuild),
+          terserOptions: bundle.terserOptions({ latestBuild, isTestBuild }),
         }),
       ],
       moduleIds: isProdBuild && !isStatsBuild ? "deterministic" : "named",
@@ -107,7 +114,6 @@ const createWebpackConfig = ({
               ? path.resolve(context, resource)
               : require.resolve(resource);
           } catch (err) {
-            // eslint-disable-next-line no-console
             console.error(
               "Error in Home Assistant ignore plugin",
               resource,
@@ -134,14 +140,11 @@ const createWebpackConfig = ({
       !latestBuild &&
         new webpack.NormalModuleReplacementPlugin(
           new RegExp(
-            path.resolve(
-              paths.polymer_dir,
-              "homeassistant-frontend/src/resources/intl-polyfill.ts"
-            )
+            path.resolve(paths.polymer_dir, "@ha/resources/intl-polyfill.ts")
           ),
           path.resolve(
             paths.polymer_dir,
-            "homeassistant-frontend/src/resources/intl-polyfill-legacy.ts"
+            "@ha/resources/intl-polyfill-legacy.ts"
           )
         ),
       !isProdBuild && new LogStartCompilePlugin(),
@@ -170,18 +173,37 @@ const createWebpackConfig = ({
       ],
     },
     output: {
-      filename: ({ chunk }) => {
-        if (!isProdBuild || isStatsBuild || dontHash.has(chunk.name)) {
-          return `${chunk.name}-dev.js`;
-        }
-        return `${chunk.name}-${chunk.hash.substr(0, 8)}.js`;
-      },
+      filename: ({ chunk }) =>
+        isProdBuild || isStatsBuild || dontHash.has(chunk.name)
+          ? "[name]-dev.js"
+          : "[name]-[contenthash].js",
       chunkFilename:
-        isProdBuild && !isStatsBuild ? "[chunkhash:8].js" : "[id].chunk.js",
+        isProdBuild && !isStatsBuild ? "[id]-[contenthash].js" : "[name].js",
+      assetModuleFilename:
+        isProdBuild && !isStatsBuild ? "[id]-[contenthash][ext]" : "[id][ext]",
+      hashFunction: "xxhash64",
+      hashDigest: "base64url",
+      hashDigestLength: 11, // full length of 64 bit base64url
       path: outputPath,
       publicPath,
       // To silence warning in worker plugin
       globalObject: "self",
+      // Since production source maps don't include sources, we need to point to them elsewhere
+      // For dependencies, just provide the path (no source in browser)
+      // Otherwise, point to the raw code on GitHub for browser to load
+      devtoolModuleFilenameTemplate:
+        !isTestBuild && isProdBuild
+          ? (info) => {
+              const sourcePath = info.resourcePath.replace(/^\.\//, "");
+              if (
+                sourcePath.startsWith("node_modules") ||
+                sourcePath.startsWith("webpack")
+              ) {
+                return `no-source/${sourcePath}`;
+              }
+              return `${bundle.sourceMapURL()}/${sourcePath}`;
+            }
+          : undefined,
     },
     experiments: {
       topLevelAwait: true,
@@ -189,9 +211,9 @@ const createWebpackConfig = ({
   };
 };
 
-const createpanelConfig = ({ isProdBuild, latestBuild }) =>
+const createPanelConfig = ({ isProdBuild, latestBuild }) =>
   createWebpackConfig(bundle.config.panel({ isProdBuild, latestBuild }));
 
 module.exports = {
-  createpanelConfig: createpanelConfig,
+  createPanelConfig: createPanelConfig,
 };

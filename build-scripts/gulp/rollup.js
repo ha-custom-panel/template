@@ -1,5 +1,5 @@
 // Tasks to run Rollup
-/* eslint @typescript-eslint/no-var-requires: "off", prefer-arrow-callback: "off" */
+
 import log from "fancy-log";
 import gulp from "gulp";
 import http from "http";
@@ -37,10 +37,14 @@ function createServer(serveOptions) {
     })
   );
 
-  server.listen(serveOptions.port, serveOptions.networkAccess ? "0.0.0.0" : undefined, () => {
-    log.info(`Available at http://localhost:${serveOptions.port}`);
-    open(`http://localhost:${serveOptions.port}`);
-  });
+  server.listen(
+    serveOptions.port,
+    serveOptions.networkAccess ? "0.0.0.0" : undefined,
+    () => {
+      log.info(`Available at http://localhost:${serveOptions.port}`);
+      open(`http://localhost:${serveOptions.port}`);
+    }
+  );
 }
 
 function watchRollup(createConfig, extraWatchSrc = [], serveOptions = null) {
@@ -84,51 +88,11 @@ async function buildRollup(config) {
   await bundle.write(config.outputOptions);
 }
 
-gulp.task("rollup-watch-app", () => {
-  watchRollup(rollupConfig.createAppConfig);
+gulp.task("rollup-watch-panel", () => {
+  watchRollup(rollupConfig.createPanelConfig);
 });
 
-gulp.task("rollup-watch-hassio", () => {
-  watchRollup(rollupConfig.createHassioConfig, ["hassio/src/**"]);
-});
-
-gulp.task("rollup-dev-server-demo", () => {
-  watchRollup(rollupConfig.createDemoConfig, ["demo/src/**"], {
-    root: paths.demo_output_root,
-    port: 8090,
-  });
-});
-
-gulp.task("rollup-dev-server-cast", () => {
-  watchRollup(rollupConfig.createCastConfig, ["cast/src/**"], {
-    root: paths.cast_output_root,
-    port: 8080,
-    networkAccess: true,
-  });
-});
-
-gulp.task("rollup-dev-server-gallery", () => {
-  watchRollup(rollupConfig.createGalleryConfig, ["gallery/src/**"], {
-    root: paths.gallery_output_root,
-    port: 8100,
-  });
-});
-
-gulp.task("rollup-prod-app", bothBuilds(rollupConfig.createAppConfig, { isProdBuild: true }));
-
-gulp.task("rollup-prod-demo", bothBuilds(rollupConfig.createDemoConfig, { isProdBuild: true }));
-
-gulp.task("rollup-prod-cast", bothBuilds(rollupConfig.createCastConfig, { isProdBuild: true }));
-
-gulp.task("rollup-prod-hassio", () =>
-  bothBuilds(rollupConfig.createHassioConfig, { isProdBuild: true })
-);
-
-gulp.task("rollup-prod-gallery", () =>
-  buildRollup(
-    rollupConfig.createGalleryConfig({
-      isProdBuild: true,
-      latestBuild: true,
-    })
-  )
+gulp.task(
+  "rollup-prod-panel",
+  bothBuilds(rollupConfig.createPanelConfig, { isProdBuild: true })
 );

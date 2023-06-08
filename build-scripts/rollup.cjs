@@ -4,7 +4,7 @@ const path = require("path");
 const commonjs = require("@rollup/plugin-commonjs");
 const resolve = require("@rollup/plugin-node-resolve");
 const json = require("@rollup/plugin-json");
-const babel = require("@rollup/plugin-babel").babel;
+const { babel } = require("@rollup/plugin-babel");
 const replace = require("@rollup/plugin-replace");
 const visualizer = require("rollup-plugin-visualizer");
 const { string } = require("rollup-plugin-string");
@@ -40,11 +40,18 @@ const createRollupConfig = ({
   inputOptions: {
     input: entry,
     // Some entry points contain no JavaScript. This setting silences a warning about that.
-    // https://rollupjs.org/guide/en/#preserveentrysignatures
+    // https://rollupjs.org/configuration-options/#preserveentrysignatures
     preserveEntrySignatures: false,
     plugins: [
       ignore({
-        files: bundle.emptyPackages({ latestBuild }),
+        files: bundle
+          .emptyPackages({ latestBuild })
+          // TEMP HACK: Makes Rollup build work again
+          .concat(
+            require.resolve(
+              "@webcomponents/scoped-custom-element-registry/scoped-custom-element-registry.min"
+            )
+          ),
       }),
       resolve({
         extensions,
@@ -55,7 +62,7 @@ const createRollupConfig = ({
       commonjs(),
       json(),
       babel({
-        ...bundle.babelOptions({ latestBuild }),
+        ...bundle.babelOptions({ latestBuild, isProdBuild }),
         extensions,
         babelHelpers: isWDS ? "inline" : "bundled",
       }),
@@ -70,7 +77,7 @@ const createRollupConfig = ({
         }),
       !isWDS && worker(),
       !isWDS && dontHashPlugin({ dontHash }),
-      !isWDS && isProdBuild && terser(bundle.terserOptions(latestBuild)),
+      !isWDS && isProdBuild && terser(bundle.terserOptions({ latestBuild })),
       !isWDS &&
         isStatsBuild &&
         visualizer({
@@ -84,27 +91,27 @@ const createRollupConfig = ({
    * @type { import("rollup").OutputOptions }
    */
   outputOptions: {
-    // https://rollupjs.org/guide/en/#outputdir
+    // https://rollupjs.org/configuration-options/#output-dir
     dir: outputPath,
-    // https://rollupjs.org/guide/en/#outputformat
+    // https://rollupjs.org/configuration-options/#output-format
     format: latestBuild ? "es" : "systemjs",
-    // https://rollupjs.org/guide/en/#outputexternallivebindings
+    // https://rollupjs.org/configuration-options/#output-externallivebindings
     externalLiveBindings: false,
-    // https://rollupjs.org/guide/en/#outputentryfilenames
-    // https://rollupjs.org/guide/en/#outputchunkfilenames
-    // https://rollupjs.org/guide/en/#outputassetfilenames
+    // https://rollupjs.org/configuration-options/#output-entryfilenames
+    // https://rollupjs.org/configuration-options/#output-chunkfilenames
+    // https://rollupjs.org/configuration-options/#output-assetfilenames
     entryFileNames:
       isProdBuild && !isStatsBuild ? "[name]-[hash].js" : "[name].js",
     chunkFileNames: isProdBuild && !isStatsBuild ? "c.[hash].js" : "[name].js",
     assetFileNames: isProdBuild && !isStatsBuild ? "a.[hash].js" : "[name].js",
-    // https://rollupjs.org/guide/en/#outputsourcemap
+    // https://rollupjs.org/configuration-options/#output-sourcemap
     sourcemap: isProdBuild ? true : "inline",
   },
 });
 
-const createpanelConfig = ({ isProdBuild, latestBuild }) =>
+const createPanelConfig = ({ isProdBuild, latestBuild }) =>
   createRollupConfig(bundle.config.panel({ isProdBuild, latestBuild }));
 
 module.exports = {
-  createpanelConfig: createpanelConfig,
+  createPanelConfig: createPanelConfig,
 };

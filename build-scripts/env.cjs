@@ -5,26 +5,28 @@ const paths = require("./paths.cjs");
 
 module.exports = {
   useRollup() {
-    return process.env.ROLLUP === "0";
+    return process.env.ROLLUP === "1";
   },
   useWDS() {
     return process.env.WDS === "1";
   },
   isProdBuild() {
-    return process.env.NODE_ENV === "production" || module.exports.isStatsBuild();
+    return (
+      process.env.NODE_ENV === "production" || module.exports.isStatsBuild()
+    );
   },
-  isStatsBuild() {
-    return process.env.STATS === "1";
-  },
-  isTest() {
+  isTestBuild() {
     return process.env.IS_TEST === "true";
   },
   isNetlify() {
     return process.env.NETLIFY === "true";
   },
+  //Question: Should we use VERSION or pyproject.toml for version number?
   version() {
-    const version = fs
-      .readFileSync(path.resolve(paths.polymer_dir, "VERSION"), "utf8")
+    const version = fs.readFileSync(
+      path.resolve(paths.polymer_dir, "VERSION"),
+      "utf8"
+    );
     if (!version) {
       throw Error("Version not found");
     }

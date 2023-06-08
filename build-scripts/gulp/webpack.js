@@ -3,9 +3,11 @@
 import log from "fancy-log";
 import fs from "fs";
 import gulp from "gulp";
+import path from "path";
 import webpack from "webpack";
+import env from "../env.cjs";
 import paths from "../paths.cjs";
-import { createpanelConfig } from "../webpack.cjs";
+import { createPanelConfig } from "../webpack.cjs";
 
 const bothBuilds = (createConfigFunc, params) => [
   createConfigFunc({ ...params, latestBuild: true }),
@@ -19,16 +21,6 @@ const isWsl =
     .toLocaleLowerCase()
     .includes("microsoft");
 
-gulp.task("ensure-panel-build-dir", (done) => {
-  if (!fs.existsSync(paths.panel_output_root)) {
-    fs.mkdirSync(paths.panel_output_root, { recursive: true });
-  }
-  if (!fs.existsSync(paths.app_output_root)) {
-    fs.mkdirSync(paths.app_output_root, { recursive: true });
-  }
-  done();
-});
-
 const doneHandler = (done) => (err, stats) => {
   if (err) {
     log.error(err.stack || err);
@@ -39,7 +31,6 @@ const doneHandler = (done) => (err, stats) => {
   }
 
   if (stats.hasErrors() || stats.hasWarnings()) {
-    // eslint-disable-next-line no-console
     console.log(stats.toString("minimal"));
   }
 
@@ -62,17 +53,17 @@ const prodBuild = (conf) =>
 gulp.task("webpack-watch-panel", () => {
   // This command will run forever because we don't close compiler
   webpack(
-    createpanelConfig({
-      isProdBuild: false,
-      latestBuild: true,
-    })
-  ).watch({ ignored: /build/, poll: isWsl }, doneHandler());
+    process.env.ES5
+      ? bothBuilds(createPanelConfig, { isProdBuild: false })
+      : createPanelConfig({ isProdBuild: false, latestBuild: true })
+  ).watch({ poll: isWsl }, doneHandler());
 });
 
 gulp.task("webpack-prod-panel", () =>
   prodBuild(
-    bothBuilds(createpanelConfig, {
+    bothBuilds(createPanelConfig, {
       isProdBuild: true,
+      isTestBuild: env.isTestBuild(),
     })
   )
 );
