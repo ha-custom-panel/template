@@ -81,7 +81,8 @@ const genPagesProdTask =
     outputRoot,
     outputLatest,
     outputES5,
-    inputSub = "src/html"
+    inputSub = "src",
+    publicRoot = paths.panel_publicPath
   ) =>
   async () => {
     for (const [page, entries] of Object.entries(pageEntries)) {
