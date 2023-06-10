@@ -8,8 +8,7 @@ import paths from "../paths.cjs";
 gulp.task("gen-index-panel-dev", async () => {
   writepanelEntrypoint(
     `${paths.panel_publicPath}/frontend_latest/entrypoint-dev.js`,
-    `${paths.panel_publicPath}/frontend_es5/entrypoint-dev.js`,
-    "True"
+    `${paths.panel_publicPath}/frontend_es5/entrypoint-dev.js`
   );
 });
 
@@ -22,12 +21,11 @@ gulp.task("gen-index-panel-prod", async () => {
   );
   writepanelEntrypoint(
     latestManifest["entrypoint.js"],
-    es5Manifest["entrypoint.js"],
-    "False"
+    es5Manifest["entrypoint.js"]
   );
 });
 
-function writepanelEntrypoint(latestEntrypoint, es5Entrypoint, isDev) {
+function writepanelEntrypoint(latestEntrypoint, es5Entrypoint) {
   const fileElements = latestEntrypoint.split("-");
   const fileHash = fileElements[1].split(".")[0];
   fs.mkdirSync(paths.panel_output_root, { recursive: true });
@@ -54,9 +52,7 @@ if (/.*Version\\/(?:11|12)(?:\\.\\d+)*.*Safari\\//.test(navigator.userAgent)) {
   );
   fs.writeFileSync(
     path.resolve(paths.panel_output_root, "constants.py"),
-    `FILE_HASH = '${fileHash}'
-DEV = ${isDev}
-`,
+    `FILE_HASH = '${fileHash}'`,
     { encoding: "utf-8" }
   );
   fs.copyFileSync(
