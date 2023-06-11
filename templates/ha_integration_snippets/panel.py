@@ -18,7 +18,7 @@ async def register_panel(hass: HomeAssistant) -> None:
         hass.http.register_static_path(
             url_path=URL_BASE,
             path=locate_dir(),
-            cache_headers=not is_dev_build,
+            cache_headers=not is_dev_build(),
         )
         await panel_custom.async_register_panel(
             hass=hass,
@@ -26,7 +26,7 @@ async def register_panel(hass: HomeAssistant) -> None:
             webcomponent_name="panel_frontend_name",  # custom element name from `main.ts`
             sidebar_title=DOMAIN.title(),
             sidebar_icon="mdi:human-greeting",
-            module_url=f"{URL_BASE}/{entrypoint_js}",
+            module_url=f"{URL_BASE}/{entrypoint_js()}",
             embed_iframe=True,
             require_admin=True,
         )
