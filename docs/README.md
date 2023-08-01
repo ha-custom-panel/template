@@ -4,9 +4,9 @@ This repository is provided as a template for Home Assistant integrations to pro
 A custom panel can be used to provide integration specific functions not native to Home Assistant. Examples of integrations
 that current provide custom panels are:
 
-- Dynalite
-- Insteon
-- KNX
+- [Dynalite](https://github.com/ziv1234/dynalitepanel)
+- [Insteon](https://github.com/pyinsteon/insteon-panel)
+- [KNX](https://github.com/XKNX/knx-frontend)
 
 This template is also intended to make it easier for integrations to upgrade thier custom panel to utilize the latest Home Assistant frontend
 version.
