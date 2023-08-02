@@ -7,6 +7,11 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+if [ ! -f "./package.json" ]; then
+    echo "Update aborted. Run 'script/bootstrap' first."
+    exit 0
+fi
+
 echo "Updating frontend submodule"
 cd homeassistant-frontend
 
@@ -19,10 +24,10 @@ else
     tagSource="latest"
     newTag=$(git describe --tags `git rev-list --tags --max-count=1`)
 fi
-# if [ "$previousTag" == "$newTag" ]; then
-#     echo "Skipping update. Already on $tagSource tag: $newTag"
-#     exit 0
-# fi
+if [ "$previousTag" == "$newTag" ]; then
+    echo "Skipping update. Already on $tagSource tag: $newTag"
+    exit 0
+fi
 
 git checkout $newTag
 # This has cost me a couple of hours already, so let's make sure node_modules in submodule is gone
