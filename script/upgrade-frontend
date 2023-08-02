@@ -36,7 +36,7 @@ echo "Copying browserslist"
 cp homeassistant-frontend/.browserslistrc .
 
 echo "Merging requirements"
-node ./script/merge_dependencies.js
+node ./script/merge_dependencies.mjs
 
 echo "Installing modules"
 yarn install
