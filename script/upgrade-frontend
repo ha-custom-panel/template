@@ -1,0 +1,51 @@
+#!/bin/sh
+# Update homeassistant-frontend submodule.
+# Pass a specific tag to update to that version. If omitted it will update to the latest tag.
+
+# Stop on errors
+set -e
+
+cd "$(dirname "$0")/.."
+
+if [ ! -f "./package.json" ]; then
+    echo "Update aborted. Run 'script/bootstrap' first."
+    exit 0
+fi
+
+echo "Updating frontend submodule"
+cd homeassistant-frontend
+
+previousTag=$(git describe --tags)
+git fetch --tags
+if [ "$1" != "" ]; then
+    tagSource="required"
+    newTag=$1
+else
+    tagSource="latest"
+    newTag=$(git describe --tags `git rev-list --tags --max-count=1`)
+fi
+if [ "$previousTag" == "$newTag" ]; then
+    echo "Skipping update. Already on $tagSource tag: $newTag"
+    exit 0
+fi
+
+git checkout $newTag
+# This has cost me a couple of hours already, so let's make sure node_modules in submodule is gone
+rm -rf node_modules
+
+cd ..
+
+# Panel
+
+echo "Copying browserslist"
+cp homeassistant-frontend/.browserslistrc .
+
+echo "Merging requirements"
+node ./script/merge_dependencies.mjs
+
+echo "Installing modules"
+yarn install
+yarn dedupe
+
+echo "\nUpdated HA frontend from $previousTag to $newTag"
+echo "Here is the diff: https://github.com/home-assistant/frontend/compare/$previousTag..$newTag"

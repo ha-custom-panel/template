@@ -34,10 +34,15 @@ if [ ! -d "./homeassistant-frontend/src" ]; then
   git submodule update
   cd ..
 fi
+# Copy browserslist file from submodule
+cp homeassistant-frontend/.browserslistrc .
 
 # Provide a base src directory if needed
-if [ ! -d "./src" ]; then
+if [ ! -f "./package.json.project" ]; then
   cp -r ./templates/base_config/. .
+fi
+
+if [ ! -d "./src" ]; then
   cp -r ./templates/src  .
 fi
 
@@ -45,5 +50,5 @@ fi
 pip install --upgrade twine build
 
 # Install the node packages
-node ./script/merge_dependencies.cjs
+node ./script/merge_dependencies.mjs
 yarn install
