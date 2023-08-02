@@ -102,9 +102,10 @@ const createRollupConfig = ({
   },
 });
 
-const createpanelConfig = ({ isProdBuild, latestBuild }) =>
+const createPanelConfig = ({ isProdBuild, latestBuild }) =>
   createRollupConfig(bundle.config.panel({ isProdBuild, latestBuild }));
 
 module.exports = {
-  createpanelConfig: createpanelConfig,
+  createPanelConfig,
+  createRollupConfig,
 };
